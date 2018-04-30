@@ -168,6 +168,8 @@ layui.define(['jquery', 'utils', 'axios'], function (exports) { //提示：模�
       var curr = [];
       _.forEach(datas, function (item, index) {
         var parentItem ;
+        // 主页不现实在菜单节点
+        if(item.path === '/')return ;
         if (item.parentId === pid){
           parentItem = item;
           pMap.set(parentItem.xId,parentItem);
@@ -179,7 +181,8 @@ layui.define(['jquery', 'utils', 'axios'], function (exports) { //提示：模�
           } else {
             temp.push('<a href="#' + href + '">');
           }
-          temp.push('<i class="layui-icon">' + item.icon + '</i> ');
+          // 拼装图标
+          temp.push('<i class="fa fa-' + item.icon + '" style="margin-right:5px;"></i>');
           temp.push('<span>' + item.title + '</span>');
           temp.push('</a>');
           if(item.leaf =='0'){

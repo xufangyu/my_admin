@@ -115,13 +115,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">图标</label>
                     <div class="layui-input-block">
-                        <select name="icons" lay-verify="required">
+                        <select icon name="icons" lay-verify="required">
                         <option value=""></option>
                         {{# layui.each(d.icons,function(index,item){ }}                      
                         {{# if(item.value===d.menu.icon){}}
-                        <option icon value="{{item.value}}" selected><i class="layui-icon">{{item.value}}</i></option>
+                        <option icon value='{{item.value}}' selected><i class="layui-icon">{{item.value}}</i></option>
                         {{#}else{}}
-                        <option icon value="{{item.value}}"><i class="layui-icon">{{item.value}}</i></option>
+                        <option icon value='{{item.value}}'><i class="layui-icon">{{item.value}}</i></option>
                         {{#};}}
                         {{# }); }}
                         </select>
@@ -174,7 +174,7 @@
     <!-- 图标数据转化成图标 -->
     <script type="text/html" id="icon-Tpl">
         <!-- <a href="/detail/{{d.id}}" class="layui-table-link">{{d.title}}</a> -->
-        <i class="layui-icon">{{d.icon}}</i>
+        <i class="fa fa-{{d.icon}}"></i>
     </script>
 
     <!-- <script src="./plugins/layui/layui.js"></script> -->
@@ -184,37 +184,37 @@
             parentMenuList:[],
             icons: [{
                     id: 0,
-                    value: '&#xe68e;'
+                    value: 'table'
                 }, {
                     id: 1,
-                    value: '&#xe705;'
+                    value: 'chain'
                 }, {
                     id: 2,
-                    value: '&#xe658;'
+                    value: 'chain-broken'
                 }, {
                     id: 3,
-                    value: '&#xe7a0;'
+                    value: 'file-text-o'
                 }, {
                     id: 4,
-                    value: '&#xe857;'
+                    value: 'save'
                 }, {
                     id: 5,
-                    value: '&#xe614;'
+                    value: 'cny'
                 }, {
                     id: 6,
-                    value: '&#xe629;'
+                    value: 'dollar'
                 }, {
                     id: 7,
-                    value: '&#xe600;'
+                    value: 'area-chart'
                 }, {
                     id: 8,
-                    value: '&#xe609;'
+                    value: 'bar-chart'
                 }, {
                     id: 9,
-                    value: '&#xe613;'
+                    value: 'line-chart'
                 }, {
                     id: 10,
-                    value: '&#xe612;'
+                    value: 'pie-chart'
                 }]
             };
         // 获取所有的父节点菜单

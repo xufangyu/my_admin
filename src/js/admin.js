@@ -353,7 +353,7 @@ layui.define(mods, function(exports) {
           path: href,
           component: r.component,
           rendered: false,
-          icon: '&#xe62e;'
+          icon: r.icon
         });
       }
     },

@@ -25,11 +25,11 @@ layui.define(['layer', 'laytpl', 'utils', 'lodash', 'route'], function(exports) 
       TITLE: ['<li lay-id="{{d.id}}" data-path={{d.path}}>',
         '<span title="{{d.title}}">',
         '{{#if(d.icon){}}',
-        '<i class="layui-icon">{{d.icon}}</i> ',
+        '<i class="fa fa-{{d.icon}}"></i> ',
         '{{#}}}',
         '{{d.title}}',
         '</span>',
-        '<i class="layui-icon kit-tab-close">&#x1006;</i>',
+        '<i class="fa fa-close kit-tab-close"></i>',
         '</li>'
       ].join(''),
       CONTENT: ['<div class="kit-tabs-item" data-path={{d.path}} lay-tab-id="{{d.id}}" data-component="{{d.component}}" data-rendered="{{d.rendered}}">',
@@ -40,7 +40,7 @@ layui.define(['layer', 'laytpl', 'utils', 'lodash', 'route'], function(exports) 
         '<li class="kit-item" lay-id="{{d.id}}">',
         '<a href="javascript:;">',
         '<span title="{{d.title}}">{{d.title}}</span>&nbsp;',
-        '<i class="layui-icon layui-close">&#x1006;</i>',
+        '<i class="fa fa-close"></i>',
         '</a>',
         '</li>'
       ].join('')

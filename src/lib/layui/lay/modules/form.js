@@ -220,6 +220,7 @@ layui.define('layer', function(exports){
             if(othis.hasClass('layui-select-tips')){
               input.val('');
             } else {
+              // 判断是否使用了图标下拉属性
               if(othis.attr('icon') != undefined){
                 var iconItem = othis[0].children[0].cloneNode(true);
                 iconItem.setAttribute("style","position:absolute;left:20px;top:30%;");
@@ -267,27 +268,50 @@ layui.define('layer', function(exports){
             optionsFirst.value ? TIPS : (optionsFirst.innerHTML || TIPS)
           ) : TIPS;
 
-          //替代元素
-          var reElem = $(['<div class="'+ (isSearch ? '' : 'layui-unselect ') + CLASS + (disabled ? ' layui-select-disabled' : '') +'">'
-            ,'<div class="'+ TITLE +'"><input type="text" placeholder="'+ placeholder +'" value="'+ (value ? selected.html() : '') +'" '+ (isSearch ? '' : 'readonly') +' class="layui-input'+ (isSearch ? '' : ' layui-unselect') + (disabled ? (' ' + DISABLED) : '') +'">'
-            ,'<i class="layui-edge"></i></div>'
-            ,'<dl class="layui-anim layui-anim-upbit'+ (othis.find('optgroup')[0] ? ' layui-select-group' : '') +'">'+ function(options){
-              var arr = [];
-              layui.each(options, function(index, item){
-                if(index === 0 && !item.value){
-                  arr.push('<dd lay-value="" class="layui-select-tips">'+ (item.innerHTML || TIPS) +'</dd>');
-                } else if(item.tagName.toLowerCase() === 'optgroup'){
-                  arr.push('<dt>'+ item.label +'</dt>'); 
-                } else if(item.getAttribute('icon') != null && typeof item.getAttribute('icon') === 'string'){
-                  arr.push('<dd icon lay-value="'+ item.value +'" class="'+ (value === item.value ?  THIS : '') + (item.disabled ? (' '+DISABLED) : '') +'"><i class="layui-icon">'+ item.innerHTML +'</i></dd>');
-                } else {
-                  arr.push('<dd lay-value="'+ item.value +'" class="'+ (value === item.value ?  THIS : '') + (item.disabled ? (' '+DISABLED) : '') +'">'+ item.innerHTML +'</dd>');
-                }
-              });
-              arr.length === 0 && arr.push('<dd lay-value="" class="'+ DISABLED +'">没有选项</dd>');
-              return arr.join('');
-            }(othis.find('*')) +'</dl>'
-          ,'</div>'].join(''));
+          var reElem = '';
+          //替代元素,判断是否使用图标
+          if(othis.attr('icon') != undefined){
+            reElem = $(['<div class="'+ (isSearch ? '' : 'layui-unselect ') + CLASS + (disabled ? ' layui-select-disabled' : '') +'">'
+              ,'<div class="'+ TITLE +'">' + (value ? '<i class="fa fa-'+ value +'" style="position:absolute;left:20px;top:30%;">'+'</i>': '')
+              ,'<input type="text" placeholder="" '+ (isSearch ? '' : 'readonly') +' class="layui-input'+ (isSearch ? '' : ' layui-unselect') + (disabled ? (' ' + DISABLED) : '') +'">'
+              ,'<i class="layui-edge"></i></div>'
+              ,'<dl class="layui-anim layui-anim-upbit'+ (othis.find('optgroup')[0] ? ' layui-select-group' : '') +'">'+ function(options){
+                var arr = [];
+                layui.each(options, function(index, item){
+                  if(index === 0 && !item.value){
+                    arr.push('<dd lay-value="" class="layui-select-tips">'+ (item.innerHTML || TIPS) +'</dd>');
+                  } else if(item.tagName.toLowerCase() === 'optgroup'){
+                    arr.push('<dt>'+ item.label +'</dt>'); 
+                  } else if(item.getAttribute('icon') != null && typeof item.getAttribute('icon') === 'string'){
+                    arr.push('<dd icon lay-value="'+ item.value +'" class="'+ (value === item.value ?  THIS : '') + (item.disabled ? (' '+DISABLED) : '') +'"><i class="fa fa-'+ item.innerHTML  +'"></i></dd>');
+                  } else {
+                    arr.push('<dd lay-value="'+ item.value +'" class="'+ (value === item.value ?  THIS : '') + (item.disabled ? (' '+DISABLED) : '') +'">'+ item.innerHTML +'</dd>');
+                  }
+                });
+                arr.length === 0 && arr.push('<dd lay-value="" class="'+ DISABLED +'">没有选项</dd>');
+                return arr.join('');
+              }(othis.find('*')) +'</dl>'
+            ,'</div>'].join(''));
+          } else { // 原逻辑
+            var reElem = $(['<div class="'+ (isSearch ? '' : 'layui-unselect ') + CLASS + (disabled ? ' layui-select-disabled' : '') +'">'
+              ,'<div class="'+ TITLE +'"><input type="text" placeholder="'+ placeholder +'" value="'+ (value ? selected.html() : '') +'" '+ (isSearch ? '' : 'readonly') +' class="layui-input'+ (isSearch ? '' : ' layui-unselect') + (disabled ? (' ' + DISABLED) : '') +'">'
+              ,'<i class="layui-edge"></i></div>'
+              ,'<dl class="layui-anim layui-anim-upbit'+ (othis.find('optgroup')[0] ? ' layui-select-group' : '') +'">'+ function(options){
+                var arr = [];
+                layui.each(options, function(index, item){
+                  if(index === 0 && !item.value){
+                    arr.push('<dd lay-value="" class="layui-select-tips">'+ (item.innerHTML || TIPS) +'</dd>');
+                  } else if(item.tagName.toLowerCase() === 'optgroup'){
+                    arr.push('<dt>'+ item.label +'</dt>'); 
+                  } else {
+                    arr.push('<dd lay-value="'+ item.value +'" class="'+ (value === item.value ?  THIS : '') + (item.disabled ? (' '+DISABLED) : '') +'">'+ item.innerHTML +'</dd>');
+                  }
+                });
+                arr.length === 0 && arr.push('<dd lay-value="" class="'+ DISABLED +'">没有选项</dd>');
+                return arr.join('');
+              }(othis.find('*')) +'</dl>'
+            ,'</div>'].join(''));
+          }
           
           hasRender[0] && hasRender.remove(); //如果已经渲染，则Rerender
           othis.after(reElem);          
