@@ -103,13 +103,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">页面路径</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuPath" required lay-verify="required" value="{{d.menu.menuPath}}" placeholder="请输入页面路径" autocomplete="off" class="layui-input">
+                        <input type="text" name="menuPath" required lay-verify="required" value="{{d.menu.menuPath}}" placeholder="请输入页面路径,格式：/XXX" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">菜单路径</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuComponent" required lay-verify="required" value="{{d.menu.menuComponent}}" placeholder="请输入菜单路径" autocomplete="off" class="layui-input">
+                        <input type="text" name="menuComponent" required lay-verify="required" value="{{d.menu.menuComponent}}" placeholder="请输入菜单路径,格式：/components/YYY.html" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -132,7 +132,7 @@
                     <div class="layui-input-block">
                         <select name="parentId" lay-verify="required">
                         <option value=""></option>
-                        {{# layui.each(d.parentList,function(index,item){ }}                      
+                        {{# layui.each(d.parentMenuList,function(index,item){ }}                      
                         {{# if(item.xId===d.menu.parentId){}}
                         <option value="{{item.xId}}" selected>{{item.menuName}}</option>
                         {{#}else{}}
@@ -330,7 +330,7 @@
                     var d = {
                         menu: data,
                         icons: staticData.icons,
-                        parentList:staticData.parentMenuList
+                        parentMenuList:staticData.parentMenuList
                     };
                     //do something
                     laytpl($('#edit-tpl').html()).render(d, function(html) {
@@ -342,6 +342,7 @@
                             btn: ['提交', '重置', '取消'],
                             yes: function(index, layero) {
                                 editIndex = index;
+                                actionType = "edit";
                                 $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
                             },
                             btn2: function(index, layero) {
@@ -364,12 +365,37 @@
             $('#kit-search-more').on('click', function() {
                 $('.kit-search-mored').toggle();
             });
+            // 编辑的条目位置
             var editIndex;
+            // 编辑的类型
+            var actionType;
             form.on('submit(formEdit)', function(data) {
+                var subUrl = "/xqsrd/menu/addMenu";
+                console.log(actionType);
+                // 判断是否为edit事件，默认为add
+                if(actionType === "edit"){
+                    subUrl = "/xqsrd/menu/updMenu";
+                }
+                // 提交数据
+                $.ajax({
+                    url:subUrl,
+                    type: "POST",
+                    data:JSON.stringify(data.field),
+                    contentType: "application/json",
+                    dataType: "json",
+                    error: function(xhr, status, thrown) {
+                        layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+                    },
+                    success: function(res) {
+                        //得到数据
+                        console.log(res);
+                        console.log(res.length);
+                    }
+                });
                 // layer.msg('formEdit');
-                layer.alert(JSON.stringify(data.field), {
-                    title: '最终的提交信息'
-                })
+                // layer.alert(JSON.stringify(data.field), {
+                //     title: '最终的提交信息'
+                // })
                 editIndex && layer.close(editIndex); //关闭弹出层
                 return false;
             });
@@ -384,16 +410,17 @@
                 switch (action) {
                     case 'add':
                         var d = {
-                            user: {
-                                username: '',
-                                loginName: '',
-                                role: '',
-                                mobile: '',
-                                email: 1,
-                                loginTime: '',
-                                lastLoginTime: ''
+                            menu: {
+                                menuName: '1',
+                                menuPath: '1',
+                                menuComponent: '1',
+                                icon: 'file-text-o',
+                                parentId: 0,
+                                leaf: '0',
+                                pos: '10'
                             },
-                            roles: staticData.roles
+                            parentMenuList: staticData.parentMenuList,
+                            icons: staticData.icons,
                         };
                         //渲染
                         laytpl($('#edit-tpl').html()).render(d,
@@ -406,6 +433,7 @@
                                     btn: ['提交', '重置', '取消'],
                                     yes: function(index, layero) {
                                         editIndex = index;
+                                        actionType = "add";
                                         $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
                                     },
                                     btn2: function(index, layero) {
