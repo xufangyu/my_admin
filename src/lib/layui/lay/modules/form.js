@@ -210,12 +210,12 @@ layui.define('layer', function(exports){
 
           //选择
           dds.on('click', function(){
-            // 移除之前的所有
-            input.prevAll().remove();
             var othis = $(this), value = othis.attr('lay-value');
             var filter = select.attr('lay-filter'); //获取过滤器
-
+            
             if(othis.hasClass(DISABLED)) return false;
+            // 移除之前的所有
+            input.prevAll().remove();
             
             if(othis.hasClass('layui-select-tips')){
               input.val('');

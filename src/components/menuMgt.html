@@ -83,8 +83,11 @@
             <table id="demo" lay-filter="demo"></table>
             <script type="text/html" id="barDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+                <!-- 判断是否为根目录 -->
+                {{#  if(d.xId != 1){ }}
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                {{#  } }}
             </script>
         </div>
     </div>
@@ -93,35 +96,35 @@
     <script type="text/html" id="edit-tpl">
         <div style="margin:10px">
             <form class="layui-form" action="" lay-filter="form-edit">
-                <input type="hidden" name="id" value="{{d.menu.id}}" />
+                <input type="hidden" name="xId" value="{{d.menu.xId}}" />
                 <div class="layui-form-item">
                     <label class="layui-form-label">菜单名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuName" required lay-verify="required" value="{{d.menu.menuName}}" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
+                        <input type="text" name="menuName" required lay-verify="required" value="{{d.menu.menuName}}" placeholder="请输入菜单名称" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">页面路径</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuPath" required lay-verify="required" value="{{d.menu.menuPath}}" placeholder="请输入页面路径,格式：/XXX" autocomplete="off" class="layui-input">
+                        <input type="text" name="menuPath" required lay-verify="required" value="{{d.menu.menuPath}}" placeholder="请输入页面路径,格式：/XXX" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">菜单路径</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuComponent" required lay-verify="required" value="{{d.menu.menuComponent}}" placeholder="请输入菜单路径,格式：/components/YYY.html" autocomplete="off" class="layui-input">
+                        <input type="text" name="menuComponent" required lay-verify="" value="{{d.menu.menuComponent}}" placeholder="请输入菜单路径,格式：/components/YYY.html" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">图标</label>
                     <div class="layui-input-block">
-                        <select icon name="icons" lay-verify="required">
-                        <option value=""></option>
+                        <select icon name="menuIcon" lay-verify="required">
+                        <option value="" {{d.disabled}}></option>
                         {{# layui.each(d.icons,function(index,item){ }}                      
                         {{# if(item.value===d.menu.icon){}}
-                        <option icon value='{{item.value}}' selected><i class="layui-icon">{{item.value}}</i></option>
+                        <option icon value='{{item.value}}' selected {{d.disabled}}><i class="layui-icon">{{item.value}}</i></option>
                         {{#}else{}}
-                        <option icon value='{{item.value}}'><i class="layui-icon">{{item.value}}</i></option>
+                        <option icon value='{{item.value}}' {{d.disabled}}><i class="layui-icon">{{item.value}}</i></option>
                         {{#};}}
                         {{# }); }}
                         </select>
@@ -131,12 +134,12 @@
                     <label class="layui-form-label">父节点</label>
                     <div class="layui-input-block">
                         <select name="parentId" lay-verify="required">
-                        <option value=""></option>
+                        <option value="0" {{d.disabled}}>根节点</option>
                         {{# layui.each(d.parentMenuList,function(index,item){ }}                      
                         {{# if(item.xId===d.menu.parentId){}}
-                        <option value="{{item.xId}}" selected>{{item.menuName}}</option>
+                        <option value="{{item.xId}}" selected {{d.disabled}}>{{item.menuName}}</option>
                         {{#}else{}}
-                        <option value="{{item.xId}}">{{item.menuName}}</option>
+                        <option value="{{item.xId}}" {{d.disabled}}>{{item.menuName}}</option>
                         {{#};}}
                         {{# }); }}
                         </select>
@@ -145,13 +148,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">节点类型</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" name="leaf" value="{{d.menu.leaf}}" lay-skin="switch" lay-text="节点|叶子" lay-filter="leaf-change" {{ d.menu.leaf == '0' ? 'checked' : '' }}>
+                        <input type="checkbox" name="leaf" value="{{d.menu.leaf}}" lay-skin="switch" lay-text="叶子|节点" lay-filter="leaf-change" {{ d.menu.leaf == '1' ? 'checked' : '' }} {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">权重</label>
                     <div class="layui-input-block">
-                        <input type="number" name="pos" required lay-verify="required" value="{{d.menu.pos}}" placeholder="请输入菜单路径" autocomplete="off" class="layui-input">
+                        <input type="number" name="pos" required lay-verify="required" value="{{d.menu.pos}}" placeholder="请输入菜单路径" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item" style="display:none;">
@@ -179,7 +182,7 @@
 
     <!-- <script src="./plugins/layui/layui.js"></script> -->
     <script>
-        $.aja
+        
         var staticData = {
             parentMenuList:[],
             icons: [{
@@ -311,6 +314,29 @@
                 });
                 return false;
             });
+            // 显示UI
+            function openUIFunc(html) {
+                layer.open({
+                    type: 1,
+                    title: '表单',
+                    content: html,
+                    area: ['800px', '600px'],
+                    btn: ['提交', '重置', '取消'],
+                    yes: function(index, layero) {
+                        editIndex = index;
+                        actionType = "edit";
+                        $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
+                    },
+                    btn2: function(index, layero) {
+                        $('form[lay-filter="form-edit"]').find('button[type="reset"]').click();
+                        return false;
+                    },
+                    success: function() {
+                        form.render(null, 'form-edit');
+                    }
+                });
+            };
+
             //监听工具条
             table.on('tool(demo)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
                 var data = obj.data; //获得当前行数据
@@ -320,6 +346,14 @@
                 if (layEvent === 'detail') { //查看
                     console.log(table.checkStatus('demo'));
                     //do somehing
+                    var d = {
+                        disabled:"disabled",
+                        menu: data,
+                        icons: staticData.icons,
+                        parentMenuList:staticData.parentMenuList
+                    };
+                    //do something
+                    laytpl($('#edit-tpl').html()).render(d, openUIFunc);
                 } else if (layEvent === 'del') { //删除
                     layer.confirm('真的删除行么', function(index) {
                         obj.del(); //删除对应行（tr）的DOM结构
@@ -333,34 +367,14 @@
                         parentMenuList:staticData.parentMenuList
                     };
                     //do something
-                    laytpl($('#edit-tpl').html()).render(d, function(html) {
-                        layer.open({
-                            type: 1,
-                            title: '表单',
-                            content: html,
-                            area: ['800px', '600px'],
-                            btn: ['提交', '重置', '取消'],
-                            yes: function(index, layero) {
-                                editIndex = index;
-                                actionType = "edit";
-                                $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
-                            },
-                            btn2: function(index, layero) {
-                                $('form[lay-filter="form-edit"]').find('button[type="reset"]').click();
-                                return false;
-                            },
-                            success: function() {
-                                form.render(null, 'form-edit');
-                            }
-                        });
-                    });
+                    laytpl($('#edit-tpl').html()).render(d, openUIFunc);
                     //同步更新缓存对应的值
                     // obj.update({
                     //     username: '123',
                     //     title: 'xxx'
                     // });
                 }
-            });
+            });            
             form.render(null, 'kit-search-form');
             $('#kit-search-more').on('click', function() {
                 $('.kit-search-mored').toggle();
@@ -392,10 +406,10 @@
                         console.log(res.length);
                     }
                 });
-                // layer.msg('formEdit');
-                // layer.alert(JSON.stringify(data.field), {
-                //     title: '最终的提交信息'
-                // })
+                layer.msg('formEdit');
+                layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                })
                 editIndex && layer.close(editIndex); //关闭弹出层
                 return false;
             });
@@ -423,28 +437,7 @@
                             icons: staticData.icons,
                         };
                         //渲染
-                        laytpl($('#edit-tpl').html()).render(d,
-                            function(html) {
-                                layer.open({
-                                    type: 1,
-                                    title: '表单',
-                                    content: html,
-                                    area: ['800px', '600px'],
-                                    btn: ['提交', '重置', '取消'],
-                                    yes: function(index, layero) {
-                                        editIndex = index;
-                                        actionType = "add";
-                                        $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
-                                    },
-                                    btn2: function(index, layero) {
-                                        $('form[lay-filter="form-edit"]').find('button[type="reset"]').click();
-                                        return false;
-                                    },
-                                    success: function() {
-                                        form.render(null, 'form-edit');
-                                    }
-                                });
-                            });
+                        laytpl($('#edit-tpl').html()).render(d,openUIFunc);
                         break;
                     case 'del-bulk':
                         var d = table.checkStatus('demo');
