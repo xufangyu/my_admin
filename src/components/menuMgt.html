@@ -3,9 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>用户管理模块</title>
-    <!-- <link rel="stylesheet" href="./plugins/font-awesome/css/font-awesome.min.css" media="all">
-        <link rel="stylesheet" href="./css/themes/default.css" media="all"> -->
+    <title>菜单管理模块</title>
     <script src="./lib/jquery-3.2.1.js"></script>
     <link rel="stylesheet" href="./css/menuMgt.css" media="all">
 </head>
@@ -406,10 +404,10 @@
                         console.log(res.length);
                     }
                 });
-                layer.msg('formEdit');
-                layer.alert(JSON.stringify(data.field), {
-                    title: '最终的提交信息'
-                })
+                // layer.msg('formEdit');
+                // layer.alert(JSON.stringify(data.field), {
+                //     title: '最终的提交信息'
+                // })
                 editIndex && layer.close(editIndex); //关闭弹出层
                 return false;
             });
