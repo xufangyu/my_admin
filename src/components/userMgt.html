@@ -173,57 +173,23 @@
         var updUrl = "/xqsrd/user/updUser";
         var delUrl = "";
         var staticData = {
-            parentMenuList:[],
-            icons: [{
-                    id: 0,
-                    value: 'table'
-                }, {
-                    id: 1,
-                    value: 'chain'
-                }, {
-                    id: 2,
-                    value: 'chain-broken'
-                }, {
-                    id: 3,
-                    value: 'file-text-o'
-                }, {
-                    id: 4,
-                    value: 'save'
-                }, {
-                    id: 5,
-                    value: 'cny'
-                }, {
-                    id: 6,
-                    value: 'dollar'
-                }, {
-                    id: 7,
-                    value: 'area-chart'
-                }, {
-                    id: 8,
-                    value: 'bar-chart'
-                }, {
-                    id: 9,
-                    value: 'line-chart'
-                }, {
-                    id: 10,
-                    value: 'pie-chart'
-                }]
+            parentMenuList:[]
             };
         // 获取所有的父节点菜单
-        $.ajax({
-            url:"/xqsrd/menu/getParentMenuList",
-            type: "GET",
-            dataType: "json",
-            error: function(xhr, status, thrown) {
-                layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
-            },
-            success: function(res) {
-                //得到数据
-                // console.log(res);
-                // console.log(res.length);
-                staticData.parentMenuList = res;
-            }
-        });
+        // $.ajax({
+        //     url:"/xqsrd/menu/getParentMenuList",
+        //     type: "GET",
+        //     dataType: "json",
+        //     error: function(xhr, status, thrown) {
+        //         layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+        //     },
+        //     success: function(res) {
+        //         //得到数据
+        //         // console.log(res);
+        //         // console.log(res.length);
+        //         staticData.parentMenuList = res;
+        //     }
+        // });
         layui.use(['table'], function() {
             var table = layui.table,
                 $ = layui.jquery,

@@ -322,7 +322,6 @@
                     btn: ['提交', '重置', '取消'],
                     yes: function(index, layero) {
                         editIndex = index;
-                        actionType = "edit";
                         $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
                     },
                     btn2: function(index, layero) {
@@ -342,6 +341,7 @@
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
 
                 if (layEvent === 'detail') { //查看
+                    actionType = "detail";
                     console.log(table.checkStatus('demo'));
                     //do somehing
                     var d = {
@@ -359,6 +359,7 @@
                         //向服务端发送删除指令
                     });
                 } else if (layEvent === 'edit') { //编辑
+                    actionType = "edit";
                     var d = {
                         menu: data,
                         icons: staticData.icons,
