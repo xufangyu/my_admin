@@ -30,18 +30,24 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">输入框</label>
                         <div class="layui-input-block">
-                            <input type="text" name="title" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">输入框</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="loginName" placeholder="请输入登录名" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">验证手机</label>
+                            <label class="layui-form-label">手机</label>
                             <div class="layui-input-inline">
-                                <input type="tel" name="phone" autocomplete="off" class="layui-input">
+                                <input type="tel" name="mobile" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">验证邮箱</label>
+                            <label class="layui-form-label">邮箱</label>
                             <div class="layui-input-inline">
                                 <input type="text" name="email" autocomplete="off" class="layui-input">
                             </div>
@@ -49,27 +55,14 @@
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">范围</label>
+                            <label class="layui-form-label">注册时间范围</label>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text" name="price_min" placeholder="￥" autocomplete="off" class="layui-input">
+                                <input type="text" name="gmtCreate_min" placeholder="￥" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-form-mid">-</div>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text" name="price_max" placeholder="￥" autocomplete="off" class="layui-input">
+                                <input type="text" name="gmtCreate_max" placeholder="￥" autocomplete="off" class="layui-input">
                             </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">单行选择框</label>
-                        <div class="layui-input-block">
-                            <select name="interest" lay-filter="aihao">
-                                <option value=""></option>
-                                <option value="0">写作</option>
-                                <option value="1" selected="">阅读</option>
-                                <option value="2">游戏</option>
-                                <option value="3">音乐</option>
-                                <option value="4">旅行</option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -83,78 +76,47 @@
             <table id="demo" lay-filter="demo"></table>
             <script type="text/html" id="barDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
-                <!-- 判断是否为根目录 -->
-                {{#  if(d.xId != 1){ }}
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                <!-- 判断是否为admin账号，不允许删除 -->
+                {{#  if(d.xId != 1){ }}
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
                 {{#  } }}
             </script>
         </div>
     </div>
 
-
     <script type="text/html" id="edit-tpl">
         <div style="margin:10px">
             <form class="layui-form" action="" lay-filter="form-edit">
-                <input type="hidden" name="xId" value="{{d.menu.xId}}" />
+                <input type="hidden" name="xId" value="{{d.user.xId}}" />
                 <div class="layui-form-item">
-                    <label class="layui-form-label">菜单名称</label>
+                    <label class="layui-form-label">账号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuName" required lay-verify="required" value="{{d.menu.menuName}}" placeholder="请输入菜单名称" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="text" name="loginName" required lay-verify="loginName|length6_20" value="{{d.user.loginName}}" placeholder="请输入账号" autocomplete="off" class="layui-input" {{d.disabled}}>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="display:none;" id="inp-password">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="password" required lay-verify="" value="" placeholder="请输入密码" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">页面路径</label>
+                    <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuPath" required lay-verify="required" value="{{d.menu.menuPath}}" placeholder="请输入页面路径,格式：/XXX" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="text" name="username" required lay-verify="required" value="{{d.user.username}}" placeholder="请输入用户名" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">菜单路径</label>
+                    <label class="layui-form-label">手机</label>
                     <div class="layui-input-block">
-                        <input type="text" name="menuComponent" required lay-verify="" value="{{d.menu.menuComponent}}" placeholder="请输入菜单路径,格式：/components/YYY.html" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="mobile" name="mobile" required lay-verify="!phone" value="{{d.user.mobile}}" placeholder="请输入手机" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">图标</label>
+                    <label class="layui-form-label">邮箱</label>
                     <div class="layui-input-block">
-                        <select icon name="menuIcon" lay-verify="required">
-                        <option value="" {{d.disabled}}></option>
-                        {{# layui.each(d.icons,function(index,item){ }}                      
-                        {{# if(item.value===d.menu.icon){}}
-                        <option icon value='{{item.value}}' selected {{d.disabled}}><i class="layui-icon">{{item.value}}</i></option>
-                        {{#}else{}}
-                        <option icon value='{{item.value}}' {{d.disabled}}><i class="layui-icon">{{item.value}}</i></option>
-                        {{#};}}
-                        {{# }); }}
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">父节点</label>
-                    <div class="layui-input-block">
-                        <select name="parentId" lay-verify="required">
-                        <option value="0" {{d.disabled}}>根节点</option>
-                        {{# layui.each(d.parentMenuList,function(index,item){ }}                      
-                        {{# if(item.xId===d.menu.parentId){}}
-                        <option value="{{item.xId}}" selected {{d.disabled}}>{{item.menuName}}</option>
-                        {{#}else{}}
-                        <option value="{{item.xId}}" {{d.disabled}}>{{item.menuName}}</option>
-                        {{#};}}
-                        {{# }); }}
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">节点类型</label>
-                    <div class="layui-input-block">
-                        <input type="checkbox" name="leaf" value="{{d.menu.leaf}}" lay-skin="switch" lay-text="叶子|节点" lay-filter="leaf-change" {{ d.menu.leaf == '1' ? 'checked' : '' }} {{d.disabled}}>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">权重</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="pos" required lay-verify="required" value="{{d.menu.pos}}" placeholder="请输入菜单路径" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="email" name="email" required lay-verify="!email" value="{{d.user.email}}" placeholder="请输入邮箱" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item" style="display:none;">
@@ -169,9 +131,10 @@
 
     <script>
         var getListUrl = '/xqsrd/user/getList';
-        var addUrl = "/xqsrd/user/addUser";
-        var updUrl = "/xqsrd/user/updUser";
-        var delUrl = "";
+        var addUrl = "/xqsrd/user/add";
+        var updUrl = "/xqsrd/user/upd";
+        var delUrl = "/xqsrd/user/del";
+        var delBatchUrl = "/xqsrd/user/delBatch";
         var staticData = {
             parentMenuList:[]
             };
@@ -212,10 +175,6 @@
                         title: '用户名',
                         width: 120
                     }, {
-                        field: 'password',
-                        title: '密码',
-                        width: 80
-                    }, {
                         field: 'loginName',
                         title: '登录名',
                         width: 120
@@ -230,11 +189,15 @@
                     }, {
                         field: 'loginTime',
                         title: '登录时间',
-                        width: 100,
+                        width: 160,
                     }, {
                         field: 'lastLoginTime',
                         title: '上次登录时间',
-                        width: 120
+                        width: 160
+                    }, {
+                        field: 'gmtCreate',
+                        title: '注册时间',
+                        width: 160
                     }, {
                         fixed: 'right',
                         title: '操作',
@@ -246,6 +209,7 @@
                 done: function(res, curr, count) {
                     //如果是异步请求数据方式，res即为你接口返回的信息。
                     //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                    debugger;
                     console.log(res);
                     //得到当前页码
                     console.log(curr);
@@ -272,11 +236,10 @@
                     type: 1,
                     title: '表单',
                     content: html,
-                    area: ['800px', '600px'],
+                    area: ['600px', '400px'],
                     btn: ['提交', '重置', '取消'],
                     yes: function(index, layero) {
                         editIndex = index;
-                        actionType = "edit";
                         $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
                     },
                     btn2: function(index, layero) {
@@ -295,6 +258,7 @@
                 var layEvent = obj.event; //获得 lay-event 对应的值
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
 
+                actionType = layEvent;
                 if (layEvent === 'detail') { //查看
                     console.log(table.checkStatus('demo'));
                     //do somehing
@@ -309,6 +273,7 @@
                         obj.del(); //删除对应行（tr）的DOM结构
                         layer.close(index);
                         //向服务端发送删除指令
+                        delUser(delUrl,data);
                     });
                 } else if (layEvent === 'edit') { //编辑
                     var d = {
@@ -316,6 +281,8 @@
                     };
                     //do something
                     laytpl($('#edit-tpl').html()).render(d, openUIFunc);
+                    // 显示密码框
+                    $('#inp-password').show();
                     //同步更新缓存对应的值
                     // obj.update({
                     //     username: '123',
@@ -352,6 +319,9 @@
                         //得到数据
                         console.log(res);
                         console.log(res.length);
+                        debugger;
+                        //带条件查询
+                        tableIns.reload();
                     }
                 });
                 // layer.msg('formEdit');
@@ -361,31 +331,26 @@
                 editIndex && layer.close(editIndex); //关闭弹出层
                 return false;
             });
-            // 编辑时节点类型切换
-            form.on('switch(leaf-change)', function(obj) {
-                this.value = obj.elem.checked?0:1;// 0为节点，1为叶子
-                // layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
-            });
             $('.kit-search-btns').children('a').off('click').on('click', function() {
                 var $that = $(this),
                     action = $that.data('action');
+                    actionType = action;
                 switch (action) {
                     case 'add':
                         var d = {
-                            menu: {
-                                menuName: '1',
-                                menuPath: '1',
-                                menuComponent: '1',
-                                icon: 'file-text-o',
-                                parentId: 0,
-                                leaf: '0',
-                                pos: '10'
-                            },
-                            parentMenuList: staticData.parentMenuList,
-                            icons: staticData.icons,
+                            user: {
+                                username: '',
+                                loginName: '',
+                                password: '',
+                                mobile: '',
+                                email: ''
+                            }
                         };
                         //渲染
                         laytpl($('#edit-tpl').html()).render(d,openUIFunc);
+                        // 显示密码框
+                        $('#inp-password').show();
+
                         break;
                     case 'del-bulk':
                         var d = table.checkStatus('demo');
@@ -396,16 +361,40 @@
                         var data = d.data,
                             names = [],
                             ids = [];
+                            // ids = [];
                         layui.each(data, function(index, item) {
                             console.log(item);
-                            names.push(item.menuName);
+                            names.push(item.username);
                             ids.push(item.xId);
                         });
                         layer.msg(names.join(','));
                         console.log(ids.join(','));
+                        //向服务端发送删除指令
+                        delUser(delUrl,{'xIds':ids});
                         break;
                 }
             });
+            // 删除的请求
+            function delUser(delUrl,delData) {
+                // 提交数据
+                $.ajax({
+                    url:delUrl,
+                    type: "POST",
+                    data:JSON.stringify(delData),
+                    contentType: "application/json",
+                    dataType: "json",
+                    error: function(xhr, status, thrown) {
+                        layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+                    },
+                    success: function(res) {
+                        //得到数据
+                        console.log(res);
+                        console.log(res.length);
+                        //带条件查询
+                        tableIns.reload();
+                    }
+                });
+            };
         });
     </script>
 </body>
