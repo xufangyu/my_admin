@@ -6,8 +6,9 @@
     <title>用户管理模块</title>
     <!-- <link rel="stylesheet" href="./plugins/font-awesome/css/font-awesome.min.css" media="all">
         <link rel="stylesheet" href="./css/themes/default.css" media="all"> -->
-    <script src="./lib/jquery-3.2.1.js"></script>
-    <link rel="stylesheet" href="./css/userMgt.css" media="all">
+    <script src="/lib/jquery/jquery-3.2.1.js"></script>
+    <script src="/lib/jquery/jquery.md5.js"></script>
+    <link rel="stylesheet" href="/css/userMgt.css" media="all">
 </head>
 <body>
     <div class="kit-table">
@@ -209,7 +210,6 @@
                 done: function(res, curr, count) {
                     //如果是异步请求数据方式，res即为你接口返回的信息。
                     //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                    debugger;
                     console.log(res);
                     //得到当前页码
                     console.log(curr);
@@ -305,6 +305,9 @@
                 if(actionType === "edit"){
                     subUrl = updUrl;
                 }
+                // 对密码加密
+                data.field.password = $.md5(data.field.password);
+
                 // 提交数据
                 $.ajax({
                     url:subUrl,
@@ -319,7 +322,6 @@
                         //得到数据
                         console.log(res);
                         console.log(res.length);
-                        debugger;
                         //带条件查询
                         tableIns.reload();
                     }

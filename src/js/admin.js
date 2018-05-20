@@ -399,6 +399,11 @@ layui.define(mods, function(exports) {
       });
     }
   }
+  // // 获取本地session,不存在则跳转登录
+  // var user = sessionStorage.getItem("user");
+  // if(user == undefined){
+  //   window.location.href = "login.html";
+  // }
 
   var admin = new Admin();
   //判断是否使用本地数据
@@ -414,9 +419,17 @@ layui.define(mods, function(exports) {
       error: function(xhr, status, thrown) {
         layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
         navbarLoadIndex && layer.close(navbarLoadIndex);
+        // 请求失败，跳到登录界面
+        window.location.href = "login.html";
       },
       success: function(res) {
-        _data = res;
+        var data = res.data;
+        // 将用户信息放到session中
+        var loginName = data.loginName;
+        var username = data.username;
+        sessionStorage.setItem('loginName',loginName);
+        sessionStorage.setItem('username',username);
+        _data = data.menuList;
       }
     };
     $.extend(true, options, _remote.jsonp ? {
