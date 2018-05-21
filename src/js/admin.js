@@ -429,6 +429,8 @@ layui.define(mods, function(exports) {
         var username = data.username;
         sessionStorage.setItem('loginName',loginName);
         sessionStorage.setItem('username',username);
+        var loginNameSpan = $("#user_loginName");
+        loginNameSpan.html(username);
         _data = data.menuList;
       }
     };
