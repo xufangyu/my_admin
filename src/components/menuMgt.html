@@ -180,7 +180,11 @@
 
     <!-- <script src="./plugins/layui/layui.js"></script> -->
     <script>
-        
+        var getListUrl = "/xqsrd/menu/getAllMenuList";
+        var addUrl = "/xqsrd/menu/addMenu";
+        var updUrl = "/xqsrd/menu/updMenu";
+        var delUrl = "/xqsrd/user/del";
+        var delBatchUrl = "/xqsrd/user/delBatch";
         var staticData = {
             parentMenuList:[],
             icons: [{
@@ -243,7 +247,7 @@
                 elem: '#demo',
                 height: 'full-135', //容器高度
                 // url: 'datas/userMgt.json',
-                url: '/xqsrd/menu/getAllMenuList',
+                url: getListUrl,
                 page: true,
                 id: 'demo',
                 cols: [
@@ -340,8 +344,8 @@
                 var layEvent = obj.event; //获得 lay-event 对应的值
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
 
+                actionType = layEvent;
                 if (layEvent === 'detail') { //查看
-                    actionType = "detail";
                     console.log(table.checkStatus('demo'));
                     //do somehing
                     var d = {
@@ -357,9 +361,9 @@
                         obj.del(); //删除对应行（tr）的DOM结构
                         layer.close(index);
                         //向服务端发送删除指令
+                        delMenu(delUrl,data);
                     });
                 } else if (layEvent === 'edit') { //编辑
-                    actionType = "edit";
                     var d = {
                         menu: data,
                         icons: staticData.icons,
@@ -383,11 +387,11 @@
             // 编辑的类型
             var actionType;
             form.on('submit(formEdit)', function(data) {
-                var subUrl = "/xqsrd/menu/addMenu";
+                var subUrl = addUrl;
                 console.log(actionType);
                 // 判断是否为edit事件，默认为add
                 if(actionType === "edit"){
-                    subUrl = "/xqsrd/menu/updMenu";
+                    subUrl = updUrl;
                 }
                 // 提交数据
                 $.ajax({
@@ -403,6 +407,8 @@
                         //得到数据
                         console.log(res);
                         console.log(res.length);
+                        //带条件查询
+                        tableIns.reload();
                     }
                 });
                 // layer.msg('formEdit');
@@ -454,9 +460,32 @@
                         });
                         layer.msg(names.join(','));
                         console.log(ids.join(','));
+                        //向服务端发送删除指令
+                        delUser(delUrl,{'xIds':ids});
                         break;
                 }
             });
+            // 删除的请求
+            function delMenu(delUrl,delData) {
+                // 提交数据
+                $.ajax({
+                    url:delUrl,
+                    type: "POST",
+                    data:JSON.stringify(delData),
+                    contentType: "application/json",
+                    dataType: "json",
+                    error: function(xhr, status, thrown) {
+                        layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+                    },
+                    success: function(res) {
+                        //得到数据
+                        console.log(res);
+                        console.log(res.length);
+                        //带条件查询
+                        tableIns.reload();
+                    }
+                });
+            };
         });
     </script>
 </body>

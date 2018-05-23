@@ -75,7 +75,7 @@
         </form>
         <div class="kit-table-body">
             <table id="demo" lay-filter="demo"></table>
-            <script type="text/html" id="barDemo">
+            <script type="text/html" id="uBarDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
                 <!-- 判断是否为admin账号，不允许删除 -->
@@ -86,7 +86,7 @@
         </div>
     </div>
 
-    <script type="text/html" id="edit-tpl">
+    <script type="text/html" id="edit-tpl-user">
         <div style="margin:10px">
             <form class="layui-form" action="" lay-filter="form-edit">
                 <input type="hidden" name="xId" value="{{d.user.xId}}" />
@@ -204,7 +204,7 @@
                         title: '操作',
                         width: 150,
                         align: 'center',
-                        toolbar: '#barDemo'
+                        toolbar: '#uBarDemo'
                     }]
                 ],
                 done: function(res, curr, count) {
@@ -267,7 +267,7 @@
                         user: data
                     };
                     //do something
-                    laytpl($('#edit-tpl').html()).render(d, openUIFunc);
+                    laytpl($('#edit-tpl-user').html()).render(d, openUIFunc);
                 } else if (layEvent === 'del') { //删除
                     layer.confirm('真的删除行么', function(index) {
                         obj.del(); //删除对应行（tr）的DOM结构
@@ -280,7 +280,7 @@
                         user: data
                     };
                     //do something
-                    laytpl($('#edit-tpl').html()).render(d, openUIFunc);
+                    laytpl($('#edit-tpl-user').html()).render(d, openUIFunc);
                     // 显示密码框
                     $('#inp-password').show();
                     //同步更新缓存对应的值
@@ -349,7 +349,7 @@
                             }
                         };
                         //渲染
-                        laytpl($('#edit-tpl').html()).render(d,openUIFunc);
+                        laytpl($('#edit-tpl-user').html()).render(d,openUIFunc);
                         // 显示密码框
                         $('#inp-password').show();
 
