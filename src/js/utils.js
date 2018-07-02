@@ -51,7 +51,7 @@ layui.define(['lodash', 'axios'], function(exports) {
       axios.get(url)
         .then(function(res) {
           data = res.data;
-          var regList = [];
+/*          var regList = [];
           // 重置id 防止冲突
           var ids = data.match(/id=\"\w*\"/g);
           ids !== null && _.forEach(ids, function(item) { regList.push(item); });
@@ -70,7 +70,7 @@ layui.define(['lodash', 'axios'], function(exports) {
                 data = data.replace(reg, that.randomCode());
               }
             });
-          }
+          }*/
         })
         .catch(function(error) {
           var request = error.request;

@@ -72,7 +72,7 @@
             </div>
         </form>
         <div class="kit-table-body">
-            <table id="demo" lay-filter="demo"></table>
+            <table id="userdemo" lay-filter="userdemo"></table>
             <script type="text/html" id="uBarDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -127,7 +127,14 @@
             </form>
         </div>
     </script>
-
+    <script type="text/html" id="myCheckbox">
+        {{# if(d.loginName == 'admin') { }}
+        {{#     layui.table.cache.demo[d.LAY_TABLE_INDEX].checkDisabled=true; }}
+        {{# } else { }}
+        {{#     if(d.LAY_CHECKED) { var checked = 'checked=""';}  }}
+        <input type="checkbox" lay-skin="primary" name="layTableCheckbox" {{checked||''}}  >
+        {{# } }}
+    </script>
     <script>
         var getListUrl = '/xqsrd/user/getList';
         var addUrl = "/xqsrd/user/add";
@@ -158,17 +165,22 @@
                 form = layui.form,
                 laytpl = layui.laytpl;
             var tableIns = table.render({
-                elem: '#demo',
+                elem: '#userdemo',
                 height: 'full-135', //容器高度
                 // url: 'datas/userMgt.json',
                 url: getListUrl,
                 page: true,
                 id: 'demo',
-                cols: [
-                    [{
-                        checkbox: true,
+                cols: [[
+                    //{ checkbox: true, fixed: true}, 
+                    {
                         fixed: true
-                    }, {
+                        , title: '<input type="checkbox" name="layTableCheckbox" lay-skin="primary" lay-filter="layTableAllChoose">'
+                        , width: 48
+                        // id偶数才显示
+                        , templet: '#myCheckbox'
+                    }, 
+                    {
                         field: 'username',
                         title: '用户名',
                         width: 120
@@ -202,8 +214,8 @@
                         width: 150,
                         align: 'center',
                         toolbar: '#uBarDemo'
-                    }]
-                ],
+                    }
+                ]],
                 done: function(res, curr, count) {
                     //如果是异步请求数据方式，res即为你接口返回的信息。
                     //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
@@ -250,7 +262,7 @@
             };
 
             //监听工具条
-            table.on('tool(demo)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            table.on('tool(userdemo)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
                 var data = obj.data; //获得当前行数据
                 var layEvent = obj.event; //获得 lay-event 对应的值
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
