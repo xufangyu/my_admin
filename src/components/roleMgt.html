@@ -6,7 +6,7 @@
     <title>角色管理模块</title>
     <script src="/lib/jquery/jquery-3.2.1.js"></script>
     <script src="/lib/jquery/jquery.md5.js"></script>
-    <link rel="stylesheet" href="/css/userMgt.css" media="all">
+    <link rel="stylesheet" href="/css/roleMgt.css" media="all">
 </head>
 <body>
     <div class="kit-table">
@@ -24,7 +24,7 @@
                     <div class="kit-search-more" id="kit-search-more">更多筛选<i class="layui-icon">&#xe61a;</i></div>
                 </div>
             </div>
-            <div class="kit-search-mored layui-anim layui-anim-upbit">
+            <div class="kit-search-mored layui-anim layui-anim-upbit" id="kit-search-mored">
                 <div class="kit-search-body">
                     <div class="layui-form-item">
                         <label class="layui-form-label">输入框</label>
@@ -42,11 +42,11 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">修改的时间范围</label>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text" name="gmtCreate_min" placeholder="￥" autocomplete="off" class="layui-input">
+                                <input type="text" name="gmtCreate_min" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" id="gmtCreate_min">
                             </div>
                             <div class="layui-form-mid">-</div>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text" name="gmtCreate_max" placeholder="￥" autocomplete="off" class="layui-input">
+                                <input type="text" name="gmtCreate_max" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" id="gmtCreate_max">
                             </div>
                         </div>
                     </div>
@@ -62,10 +62,7 @@
             <script type="text/html" id="rBarDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-                <!-- 判断是否为admin账号，不允许删除 -->
-                {{#  if(d.xId != 1){ }}
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-                {{#  } }}
             </script>
         </div>
     </div>
@@ -73,29 +70,23 @@
     <script type="text/html" id="edit-tpl-role">
         <div style="margin:10px">
             <form class="layui-form" action="" lay-filter="form-edit">
-                <input type="hidden" name="xId" value="{{d.user.xId}}" />
+                <input type="hidden" name="xId" value="{{d.role.xId}}" />
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
                     <div class="layui-input-block">
-                        <input type="text" name="roleName" required lay-verify="" value="{{d.user.loginName}}" placeholder="请输入角色名称" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="text" name="roleName" required lay-verify="" value="{{d.role.roleName}}" placeholder="请输入角色名称" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
-                <div class="layui-form-item" style="display:none;" id="inp-password">
+                <div class="layui-form-item" id="inp-roleDescription">
                     <label class="layui-form-label">描述</label>
                     <div class="layui-input-block">
-                        <input type="text" name="roleDescription" required lay-verify="" value="" placeholder="请输入密码" autocomplete="off" class="layui-input" >
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
-                    <div class="layui-input-block">
-                        <input type="email" name="email" required lay-verify="!email" value="{{d.user.email}}" placeholder="请输入邮箱" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="text" name="roleDescription" required lay-verify="" value="{{d.role.roleDescription}}" placeholder="请输入描述" autocomplete="off" class="layui-input"  {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item" style="display:none;">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="formEdit">立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button class="layui-btn" lay-submit lay-filter="formEdit" {{d.disabled}}>立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary" {{d.disabled}}>重置</button>
                     </div>
                 </div>
             </form>
@@ -111,32 +102,21 @@
         var staticData = {
             parentMenuList:[]
             };
-        // 获取所有的父节点菜单
-        // $.ajax({
-        //     url:"/xqsrd/menu/getParentMenuList",
-        //     type: "GET",
-        //     dataType: "json",
-        //     error: function(xhr, status, thrown) {
-        //         layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
-        //     },
-        //     success: function(res) {
-        //         //得到数据
-        //         // console.log(res);
-        //         // console.log(res.length);
-        //         staticData.parentMenuList = res;
-        //     }
-        // });
-        layui.use(['table'], function() {
+        layui.use(['table','laydate'], function() {
             var table = layui.table,
                 $ = layui.jquery,
                 layer = layui.layer,
                 form = layui.form,
+                laydate = layui.laydate,
                 laytpl = layui.laytpl;
             var tableIns = table.render({
                 elem: '#demo_role',
                 height: 'full-135', //容器高度
                 // url: 'datas/userMgt.json',
                 url: getListUrl,
+                method:'POST',
+                //headers: {'Content-Type':'application/json;charset=UTF-8'},
+                contentType:'application/json',
                 page: true,
                 id: 'demo',
                 cols: [
@@ -153,7 +133,7 @@
                         width: 120
                     }, {
                         field: 'gmtCreate',
-                        title: '注册时间',
+                        title: '创建时间',
                         width: 160
                     }, {
                         fixed: 'right',
@@ -175,7 +155,29 @@
                 loading: true,
                 //method: 'post'
             });
-
+            // 渲染2个时间组件,前一天和当天
+            var beforeDate=new Date();
+            beforeDate.setDate(beforeDate.getDate()-1);
+            laydate.render({
+                elem: '#gmtCreate_min'
+                ,value: beforeDate
+                ,isInitValue: false //是否允许填充初始值，默认为 true
+                ,done: function(value, date, endDate){
+                    console.log(value); //得到日期生成的值，如：2017-08-18
+                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                }
+            });
+            laydate.render({
+                elem: '#gmtCreate_max'
+                ,value: new Date()
+                ,isInitValue: false //是否允许填充初始值，默认为 true
+                ,done: function(value, date, endDate){
+                    console.log(value); //得到日期生成的值，如：2017-08-18
+                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                }
+            });
             //监听搜索表单提交
             form.on('submit(subSearch)', function(data) {
                 console.log(data.field);
@@ -184,6 +186,8 @@
                 tableIns.reload({
                     where: data.field
                 });
+                // 关闭显示的查询框
+                $('#kit-search-mored').hide();
                 return false;
             });
             // 显示UI
@@ -221,7 +225,7 @@
                     //do somehing
                     var d = {
                         disabled:"disabled",
-                        user: data
+                        role: data
                     };
                     //do something
                     laytpl($('#edit-tpl-role').html()).render(d, openUIFunc);
@@ -230,19 +234,19 @@
                         obj.del(); //删除对应行（tr）的DOM结构
                         layer.close(index);
                         //向服务端发送删除指令
-                        delUser(delUrl,data);
+                        delRole(delUrl,data);
                     });
                 } else if (layEvent === 'edit') { //编辑
                     var d = {
-                        user: data
+                        role: data
                     };
                     //do something
                     laytpl($('#edit-tpl-role').html()).render(d, openUIFunc);
                     // 显示密码框
-                    $('#inp-password').show();
+                    //$('#inp-password').show();
                     //同步更新缓存对应的值
                     // obj.update({
-                    //     username: '123',
+                    //     rolename: '123',
                     //     title: 'xxx'
                     // });
                 }
@@ -297,18 +301,15 @@
                 switch (action) {
                     case 'add':
                         var d = {
-                            user: {
-                                username: '',
-                                loginName: '',
-                                password: '',
-                                mobile: '',
-                                email: ''
+                            role: {
+                                roleName: '',
+                                roleDescription: ''
                             }
                         };
                         //渲染
                         laytpl($('#edit-tpl-role').html()).render(d,openUIFunc);
                         // 显示密码框
-                        $('#inp-password').show();
+                        //$('#inp-password').show();
 
                         break;
                     case 'del-bulk':
@@ -323,18 +324,18 @@
                             // ids = [];
                         layui.each(data, function(index, item) {
                             console.log(item);
-                            names.push(item.username);
+                            names.push(item.roleName);
                             ids.push(item.xId);
                         });
                         layer.msg(names.join(','));
                         console.log(ids.join(','));
                         //向服务端发送删除指令
-                        delUser(delUrl,{'xIds':ids});
+                        delRole(delUrl,{'xIds':ids});
                         break;
                 }
             });
             // 删除的请求
-            function delUser(delUrl,delData) {
+            function delRole(delUrl,delData) {
                 // 提交数据
                 $.ajax({
                     url:delUrl,
