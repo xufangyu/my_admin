@@ -157,7 +157,7 @@
                 </div>
                 <div class="layui-form-item" style="display:none;">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="formEdit">立即提交</button>
+                        <button class="layui-btn" lay-submit lay-filter="menuFormEdit">立即提交</button>
                         <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                     </div>
                 </div>
@@ -386,7 +386,7 @@
             var editIndex;
             // 编辑的类型
             var actionType;
-            form.on('submit(formEdit)', function(data) {
+            form.on('submit(menuFormEdit)', function(data) {
                 var subUrl = addUrl;
                 console.log(actionType);
                 // 判断是否为edit事件，默认为add
@@ -411,7 +411,7 @@
                         tableIns.reload();
                     }
                 });
-                // layer.msg('formEdit');
+                // layer.msg('menuFormEdit');
                 // layer.alert(JSON.stringify(data.field), {
                 //     title: '最终的提交信息'
                 // })
@@ -420,8 +420,8 @@
             });
             // 编辑时节点类型切换
             form.on('switch(leaf-change)', function(obj) {
-                this.value = obj.elem.checked?0:1;// 0为节点，1为叶子
-                // layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+                this.value = obj.elem.checked?1:0;// 0为节点，1为叶子
+                //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
             });
             $('.kit-search-btns').children('a').off('click').on('click', function() {
                 var $that = $(this),

@@ -85,7 +85,7 @@
                 </div>
                 <div class="layui-form-item" style="display:none;">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="formEdit" {{d.disabled}}>立即提交</button>
+                        <button class="layui-btn" lay-submit lay-filter="roleFormEdit" {{d.disabled}}>立即提交</button>
                         <button type="reset" class="layui-btn layui-btn-primary" {{d.disabled}}>重置</button>
                     </div>
                 </div>
@@ -259,7 +259,7 @@
             var editIndex;
             // 编辑的类型
             var actionType;
-            form.on('submit(formEdit)', function(data) {
+            form.on('submit(roleFormEdit)', function(data) {
                 var subUrl = addUrl;
                 console.log(actionType);
                 // 判断是否为edit事件，默认为add
@@ -267,7 +267,7 @@
                     subUrl = updUrl;
                 }
                 // 对密码加密
-                data.field.password = $.md5(data.field.password);
+                //data.field.password = $.md5(data.field.password);
 
                 // 提交数据
                 $.ajax({
@@ -287,7 +287,7 @@
                         tableIns.reload();
                     }
                 });
-                // layer.msg('formEdit');
+                // layer.msg('roleFormEdit');
                 // layer.alert(JSON.stringify(data.field), {
                 //     title: '最终的提交信息'
                 // })

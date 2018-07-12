@@ -21,7 +21,7 @@ layui.define(mods, function(exports) {
       elem: '#app',
       loadType: 'TABS',
       remote:{
-        url: '/xqsrd/menu/getMenuList', //接口地址
+        url: '/xqsrd/menu/getUserMenuList', //接口地址
         type: 'GET', //请求方式
         jsonp: false //跨域
       }

@@ -3,10 +3,14 @@
 
 <head>
     <meta charset="utf-8">
-    <title>用户管理模块</title>
+    <title>菜单权限管理模块</title>
     <script src="/lib/jquery/jquery-3.2.1.js"></script>
     <script src="/lib/jquery/jquery.md5.js"></script>
-    <link rel="stylesheet" href="/css/userMgt.css" media="all">
+
+    <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all" />
+    <link rel="stylesheet" href="/css/permMenuMgt.css" media="all">
+    <link rel="stylesheet" href="/css/ztree/metro/ztree.css" media="all">
+    <!-- <link rel="stylesheet" href="/css/treeselect.css" media="all" /> -->
 </head>
 <body>
     <div class="kit-table">
@@ -24,43 +28,29 @@
                     <div class="kit-search-more" id="kit-search-more">更多筛选<i class="layui-icon">&#xe61a;</i></div>
                 </div>
             </div>
-            <div class="kit-search-mored layui-anim layui-anim-upbit">
+            <div class="kit-search-mored layui-anim layui-anim-upbit" id="kit-search-mored">
                 <div class="kit-search-body">
                     <div class="layui-form-item">
                         <label class="layui-form-label">输入框</label>
                         <div class="layui-input-block">
-                            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                            <input type="text" name="permissionName" placeholder="请输入菜单权限名" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">输入框</label>
                         <div class="layui-input-block">
-                            <input type="text" name="loginName" placeholder="请输入登录名" autocomplete="off" class="layui-input">
+                            <input type="text" name="permissionDescription" placeholder="请输入描述" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">手机</label>
-                            <div class="layui-input-inline">
-                                <input type="tel" name="mobile" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">邮箱</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="email" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">注册时间范围</label>
+                            <label class="layui-form-label">修改的时间范围</label>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text" name="gmtCreate_min" placeholder="￥" autocomplete="off" class="layui-input">
+                                <input type="text" name="gmtCreate_min" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" id="gmtCreate_min">
                             </div>
                             <div class="layui-form-mid">-</div>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text" name="gmtCreate_max" placeholder="￥" autocomplete="off" class="layui-input">
+                                <input type="text" name="gmtCreate_max" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" id="gmtCreate_max">
                             </div>
                         </div>
                     </div>
@@ -72,150 +62,122 @@
             </div>
         </form>
         <div class="kit-table-body">
-            <table id="userdemo" lay-filter="userdemo"></table>
-            <script type="text/html" id="uBarDemo">
+            <table id="demo_permission" lay-filter="demo_permission"></table>
+            <script type="text/html" id="rBarDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-                <!-- 判断是否为admin账号，不允许删除 -->
-                {{#  if(d.xId != 1){ }}
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-                {{#  } }}
             </script>
         </div>
     </div>
 
-    <script type="text/html" id="edit-tpl-user">
+    <script type="text/html" id="edit-tpl-permission">
         <div style="margin:10px">
             <form class="layui-form" action="" lay-filter="form-edit">
-                <input type="hidden" name="xId" value="{{d.user.xId}}" />
+                <input type="hidden" name="xId" value="{{d.permission.xId}}" />
                 <div class="layui-form-item">
-                    <label class="layui-form-label">账号</label>
+                    <label class="layui-form-label">菜单权限</label>
                     <div class="layui-input-block">
-                        <input type="text" name="loginName" required lay-verify="loginName|length6_20" value="{{d.user.loginName}}" placeholder="请输入账号" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="text" name="permissionName" required lay-verify="" value="{{d.permission.permissionName}}" placeholder="请输入菜单权限名称" autocomplete="off" class="layui-input" {{d.disabled}}>
                     </div>
                 </div>
-                <div class="layui-form-item" style="display:none;" id="inp-password">
-                    <label class="layui-form-label">密码</label>
+                <div class="layui-form-item" id="inp-permissionDescription">
+                    <label class="layui-form-label">描述</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" required lay-verify="" value="" placeholder="请输入密码" autocomplete="off" class="layui-input" >
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="username" required lay-verify="required" value="{{d.user.username}}" placeholder="请输入用户名" autocomplete="off" class="layui-input" {{d.disabled}}>
+                        <input type="text" name="permissionDescription" required lay-verify="" value="{{d.permission.permissionDescription}}" placeholder="请输入描述" autocomplete="off" class="layui-input"  {{d.disabled}}>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">手机</label>
-                    <div class="layui-input-block">
-                        <input type="mobile" name="mobile" required lay-verify="!phone" value="{{d.user.mobile}}" placeholder="请输入手机" autocomplete="off" class="layui-input" {{d.disabled}}>
+                    <label class="layui-form-label">绑定菜单</label>
+                    <div class="layui-input-block layui-input-myZtree"><!-- layui-input-treeselect 一定要设置 -->
+                        <!-- myZtree1 Id也一定要设置且唯一 -->
+                        <input type="hidden" name="permMenuIds" id="myZtree1" value="{{d.permission.permMenuIds}}" />
+                        <!-- <input type="text" name="permMenuIds" id="myZtree1" required lay-verify="required" autocomplete="off" class="layui-input" > -->
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
+                <div class="layui-form-item" id="submitBtnDiv">
                     <div class="layui-input-block">
-                        <input type="email" name="email" required lay-verify="!email" value="{{d.user.email}}" placeholder="请输入邮箱" autocomplete="off" class="layui-input" {{d.disabled}}>
-                    </div>
-                </div>
-                <div class="layui-form-item" style="display:none;">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="userFormEdit">立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        {{# if(d.disabled=='disabled'){ }}
+                        <button class="layui-btn layui-btn-disabled" lay-submit lay-filter="permMenuFormEdit" {{d.disabled}}>立即提交</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-disabled" type="reset" {{d.disabled}}>重置</button>
+                        {{# } else { }}
+                        <button class="layui-btn" lay-submit lay-filter="permMenuFormEdit" >立即提交</button>
+                        <button class="layui-btn layui-btn-primary" type="reset" >重置</button>
+                        {{# } }}
                     </div>
                 </div>
             </form>
         </div>
     </script>
-    <script type="text/html" id="myCheckbox">
-        {{# if(d.loginName == 'admin') { }}
-        {{#     layui.table.cache.demo[d.LAY_TABLE_INDEX].checkDisabled=true; }}
-        {{# } else { }}
-        {{#     if(d.LAY_CHECKED) { var checked = 'checked=""';}  }}
-        <input type="checkbox" lay-skin="primary" name="layTableCheckbox" {{checked||''}}  >
-        {{# } }}
+    <script type="text/html" id="edit-bind-tpl-permission">
+        <div class="kit-table">
+            <form class="layui-form" lay-filter="kit-search-form">
+                <div class="layui-form-item">
+                    <!-- <label class="layui-form-label">多选下拉1</label> -->
+                    <div class="layui-input-myZtree"><!-- layui-input-treeselect 一定要设置 -->
+                        <!-- myZtree1 Id也一定要设置且唯一 -->
+                        <input type="hidden" name="permMenuIds" id="myZtree11" value="1,4" />
+                        <!-- <input type="text" name="permMenuIds" id="myZtree1" required lay-verify="required" autocomplete="off" class="layui-input" > -->
+                    </div>
+                </div>
+            </form>
+        </div>
     </script>
+
+
     <script>
-        var getListUrl = '/xqsrd/user/getList';
-        var addUrl = "/xqsrd/user/add";
-        var updUrl = "/xqsrd/user/upd";
-        var delUrl = "/xqsrd/user/del";
-        var delBatchUrl = "/xqsrd/user/delBatch";
+        var baseUrl = "/xqsrd/permMenu";
+        var getListUrl = baseUrl +"/getList";
+        var addUrl = baseUrl +"/add";
+        var updUrl = baseUrl +"/upd";
+        var delUrl = baseUrl +"/del";
+        var delBatchUrl = baseUrl +"/delBatch";
+        var getAllMenu = "/xqsrd/menu/getAllMenuList"
         var staticData = {
+            allMenuList:[]
             };
-        // 获取所有的父节点菜单
-        // $.ajax({
-        //     url:"/xqsrd/menu/getParentMenuList",
-        //     type: "GET",
-        //     dataType: "json",
-        //     error: function(xhr, status, thrown) {
-        //         layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
-        //     },
-        //     success: function(res) {
-        //         //得到数据
-        //         // console.log(res);
-        //         // console.log(res.length);
-        //         staticData.parentMenuList = res;
-        //     }
-        // });
-        layui.use(['table'], function() {
+        layui.use(['table','laydate','myZtree'], function() {
             var table = layui.table,
                 $ = layui.jquery,
                 layer = layui.layer,
                 form = layui.form,
+                laydate = layui.laydate,
+                myZtree = layui.myZtree,
                 laytpl = layui.laytpl;
             var tableIns = table.render({
-                elem: '#userdemo',
+                elem: '#demo_permission',
                 height: 'full-135', //容器高度
                 // url: 'datas/userMgt.json',
                 url: getListUrl,
+                method:'POST',
+                //headers: {'Content-Type':'application/json;charset=UTF-8'},
+                contentType:'application/json',
                 page: true,
                 id: 'demo',
-                cols: [[
-                    //{ checkbox: true, fixed: true}, 
-                    {
+                cols: [
+                    [{
+                        checkbox: true,
                         fixed: true
-                        , title: '<input type="checkbox" name="layTableCheckbox" lay-skin="primary" lay-filter="layTableAllChoose">'
-                        , width: 48
-                        // id偶数才显示
-                        , templet: '#myCheckbox'
-                    }, 
-                    {
-                        field: 'username',
-                        title: '用户名',
+                    }, {
+                        field: 'permissionName',
+                        title: '菜单权限名',
                         width: 120
                     }, {
-                        field: 'loginName',
-                        title: '登录名',
+                        field: 'permissionDescription',
+                        title: '描述',
                         width: 120
-                    },{
-                        field: 'mobile',
-                        title: '手机',
-                        width: 60,
-                    }, {
-                        field: 'email',
-                        title: '邮箱',
-                        width: 80
-                    }, {
-                        field: 'loginTime',
-                        title: '登录时间',
-                        width: 160,
-                    }, {
-                        field: 'lastLoginTime',
-                        title: '上次登录时间',
-                        width: 160
                     }, {
                         field: 'gmtCreate',
-                        title: '注册时间',
+                        title: '创建时间',
                         width: 160
                     }, {
                         fixed: 'right',
                         title: '操作',
                         width: 150,
                         align: 'center',
-                        toolbar: '#uBarDemo'
-                    }
-                ]],
+                        toolbar: '#rBarDemo'
+                    }]
+                ],
                 done: function(res, curr, count) {
                     //如果是异步请求数据方式，res即为你接口返回的信息。
                     //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
@@ -228,7 +190,44 @@
                 loading: true,
                 //method: 'post'
             });
-
+            // 获取所有的菜单
+            $.ajax({
+                url:getAllMenu,
+                type: "GET",
+                dataType: "json",
+                error: function(xhr, status, thrown) {
+                    layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+                },
+                success: function(res) {
+                    //得到数据
+                    // console.log(res);
+                    // console.log(res.length);
+                    staticData.allMenuList = res.data;
+                }
+            });
+            // 渲染2个时间组件,前一天和当天
+            var beforeDate=new Date();
+            beforeDate.setDate(beforeDate.getDate()-1);
+            laydate.render({
+                elem: '#gmtCreate_min'
+                ,value: beforeDate
+                ,isInitValue: false //是否允许填充初始值，默认为 true
+                ,done: function(value, date, endDate){
+                    console.log(value); //得到日期生成的值，如：2017-08-18
+                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                }
+            });
+            laydate.render({
+                elem: '#gmtCreate_max'
+                ,value: new Date()
+                ,isInitValue: false //是否允许填充初始值，默认为 true
+                ,done: function(value, date, endDate){
+                    console.log(value); //得到日期生成的值，如：2017-08-18
+                    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                }
+            });
             //监听搜索表单提交
             form.on('submit(subSearch)', function(data) {
                 console.log(data.field);
@@ -237,32 +236,40 @@
                 tableIns.reload({
                     where: data.field
                 });
+                // 关闭显示的查询框
+                $('#kit-search-mored').hide();
                 return false;
             });
             // 显示UI
-            function openUIFunc(html) {
+            function openUIFunc1(html) {
                 layer.open({
                     type: 1,
-                    title: '表单',
+                    title: '权限绑定菜单选项',
                     content: html,
-                    area: ['600px', '400px'],
-                    btn: ['提交', '重置', '取消'],
-                    yes: function(index, layero) {
-                        editIndex = index;
-                        $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
-                    },
-                    btn2: function(index, layero) {
-                        $('form[lay-filter="form-edit"]').find('button[type="reset"]').click();
-                        return false;
-                    },
-                    success: function() {
-                        form.render(null, 'form-edit');
-                    }
+                    //area: ['400px', '400px'],
+                    offset: 't100px',
+                    closeBtn: 2
+                    //btn: ['提交', '重置', '取消'],
+                    // yes: function(index, layero) {
+                    //     editIndex = index;
+                    //     $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
+                    // },
+                    // btn2: function(index, layero) {
+                    //     $('form[lay-filter="form-edit"]').find('button[type="reset"]').click();
+                    //     return false;
+                    // },
+                    // success: function() {
+                    //     form.render(null, 'form-edit');
+                    // }
+                });
+                myZtree.render({
+                    elem: '#myZtree1',
+                    data: staticData.allMenuList
                 });
             };
 
             //监听工具条
-            table.on('tool(userdemo)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            table.on('tool(demo_permission)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
                 var data = obj.data; //获得当前行数据
                 var layEvent = obj.event; //获得 lay-event 对应的值
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
@@ -273,28 +280,32 @@
                     //do somehing
                     var d = {
                         disabled:"disabled",
-                        user: data
+                        permission: data
                     };
                     //do something
-                    laytpl($('#edit-tpl-user').html()).render(d, openUIFunc);
+                    laytpl($('#edit-tpl-permission').html()).render(d, openUIFunc1);
+                    // 隐藏提交按钮
+                    $("#submitBtnDiv").show();
                 } else if (layEvent === 'del') { //删除
                     layer.confirm('真的删除行么', function(index) {
                         obj.del(); //删除对应行（tr）的DOM结构
                         layer.close(index);
                         //向服务端发送删除指令
-                        delUser(delUrl,data);
+                        delpermission(delUrl,data);
                     });
                 } else if (layEvent === 'edit') { //编辑
                     var d = {
-                        user: data
+                        permission: data
                     };
+
                     //do something
-                    laytpl($('#edit-tpl-user').html()).render(d, openUIFunc);
+                    laytpl($('#edit-tpl-permission').html()).render(d, openUIFunc1);
+
                     // 显示密码框
-                    $('#inp-password').show();
+                    //$('#inp-password').show();
                     //同步更新缓存对应的值
                     // obj.update({
-                    //     username: '123',
+                    //     permissionname: '123',
                     //     title: 'xxx'
                     // });
                 }
@@ -307,15 +318,13 @@
             var editIndex;
             // 编辑的类型
             var actionType;
-            form.on('submit(userFormEdit)', function(data) {
-                var subUrl = addUrl;
+            form.on('submit(permMenuFormEdit)', function(data) {
+                var subUrl = updUrl;
                 console.log(actionType);
-                // 判断是否为edit事件，默认为add
-                if(actionType === "edit"){
-                    subUrl = updUrl;
+                // 判断是否为add事件，默认为edit
+                if(actionType === "add"){
+                    subUrl = addUrl;
                 }
-                // 对密码加密
-                data.field.password = $.md5(data.field.password);
 
                 // 提交数据
                 $.ajax({
@@ -335,7 +344,7 @@
                         tableIns.reload();
                     }
                 });
-                // layer.msg('userFormEdit');
+                // layer.msg('permMenuFormEdit');
                 // layer.alert(JSON.stringify(data.field), {
                 //     title: '最终的提交信息'
                 // })
@@ -349,18 +358,15 @@
                 switch (action) {
                     case 'add':
                         var d = {
-                            user: {
-                                username: '',
-                                loginName: '',
-                                password: '',
-                                mobile: '',
-                                email: ''
+                            permission: {
+                                permissionName: '',
+                                permissionDescription: ''
                             }
                         };
                         //渲染
-                        laytpl($('#edit-tpl-user').html()).render(d,openUIFunc);
+                        laytpl($('#edit-tpl-permission').html()).render(d,openUIFunc1);
                         // 显示密码框
-                        $('#inp-password').show();
+                        //$('#inp-password').show();
 
                         break;
                     case 'del-bulk':
@@ -375,18 +381,18 @@
                             // ids = [];
                         layui.each(data, function(index, item) {
                             console.log(item);
-                            names.push(item.username);
+                            names.push(item.permissionName);
                             ids.push(item.xId);
                         });
                         layer.msg(names.join(','));
                         console.log(ids.join(','));
                         //向服务端发送删除指令
-                        delUser(delUrl,{'xIds':ids});
+                        delpermission(delUrl,{'xIds':ids});
                         break;
                 }
             });
             // 删除的请求
-            function delUser(delUrl,delData) {
+            function delpermission(delUrl,delData) {
                 // 提交数据
                 $.ajax({
                     url:delUrl,
