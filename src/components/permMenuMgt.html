@@ -109,21 +109,6 @@
             </form>
         </div>
     </script>
-    <script type="text/html" id="edit-bind-tpl-permission">
-        <div class="kit-table">
-            <form class="layui-form" lay-filter="kit-search-form">
-                <div class="layui-form-item">
-                    <!-- <label class="layui-form-label">多选下拉1</label> -->
-                    <div class="layui-input-myZtree"><!-- layui-input-treeselect 一定要设置 -->
-                        <!-- myZtree1 Id也一定要设置且唯一 -->
-                        <input type="hidden" name="permMenuIds" id="myZtree11" value="1,4" />
-                        <!-- <input type="text" name="permMenuIds" id="myZtree1" required lay-verify="required" autocomplete="off" class="layui-input" > -->
-                    </div>
-                </div>
-            </form>
-        </div>
-    </script>
-
 
     <script>
         var baseUrl = "/xqsrd/permMenu";
@@ -285,7 +270,7 @@
                     //do something
                     laytpl($('#edit-tpl-permission').html()).render(d, openUIFunc1);
                     // 隐藏提交按钮
-                    $("#submitBtnDiv").show();
+                    //$("#submitBtnDiv").show();
                 } else if (layEvent === 'del') { //删除
                     layer.confirm('真的删除行么', function(index) {
                         obj.del(); //删除对应行（tr）的DOM结构

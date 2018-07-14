@@ -83,24 +83,49 @@
                         <input type="text" name="roleDescription" required lay-verify="" value="{{d.role.roleDescription}}" placeholder="请输入描述" autocomplete="off" class="layui-input"  {{d.disabled}}>
                     </div>
                 </div>
-                <div class="layui-form-item" style="display:none;">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="roleFormEdit" {{d.disabled}}>立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary" {{d.disabled}}>重置</button>
+                <div class="layui-form-item" id="inp-roleDescription">
+                    <div class="kit-table-body" style="float: left;">
+                        <table id="demo_role_permission_selected" lay-filter="demo_role_permission_selected"></table>
+                    </div>
+                    <div class="kit-table-body">
+                        <table id="demo_role_permission" lay-filter="demo_role_permission"></table>
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <div class="">
+                        {{# if(d.disabled=='disabled'){ }}
+                        <div style="text-align:left;float: left;margin-right:100px">
+                        <button class="layui-btn layui-btn-disabled" {{d.disabled}}>删除</button>
+                        </div>
+                        <div style="float: right;">
+                        <button class="layui-btn layui-btn-disabled" {{d.disabled}}>添加</button>
+                        </div>
+                        {{# } else { }}
+                        <div style="text-align:left;float: left;margin-right:100px">
+                        <!-- <button class="layui-btn" lay-submit lay-filter="roleFormEdit" >删除</button> -->
+                        <button class="layui-btn" lay-submit data-action="delPerm" lay-filter="roleFormEdit" {{d.disabled}}>删除</button>
+                        </div>
+                        <div style="">
+                        <button class="layui-btn" lay-submit data-action="addPerm" lay-filter="roleFormEdit" {{d.disabled}}>添加</button>
+                        </div>
+                        {{# } }}
                     </div>
                 </div>
             </form>
         </div>
     </script>
-
     <script>
         var getListUrl = '/xqsrd/role/getList';
         var addUrl = "/xqsrd/role/add";
         var updUrl = "/xqsrd/role/upd";
         var delUrl = "/xqsrd/role/del";
         var delBatchUrl = "/xqsrd/role/delBatch";
+        var getPermListForRole = "/xqsrd/permMenu/getListAllForRole";
+        var getPermListByRoleId = "/xqsrd/permMenu/getListByRoleId";
+        var addPermListByRoleId = "/xqsrd/role/addPermListByRoleId";
+        var delPermListByRoleId = "/xqsrd/role/delPermListByRoleId";
+        var curRoleId;
         var staticData = {
-            parentMenuList:[]
             };
         layui.use(['table','laydate'], function() {
             var table = layui.table,
@@ -155,6 +180,7 @@
                 loading: true,
                 //method: 'post'
             });
+            var tableIns2,tableIns3;
             // 渲染2个时间组件,前一天和当天
             var beforeDate=new Date();
             beforeDate.setDate(beforeDate.getDate()-1);
@@ -196,19 +222,82 @@
                     type: 1,
                     title: '表单',
                     content: html,
-                    area: ['600px', '400px'],
-                    btn: ['提交', '重置', '取消'],
-                    yes: function(index, layero) {
-                        editIndex = index;
-                        $('form[lay-filter="form-edit"]').find('button[lay-submit]').click();
+                    area: ['800px', '550px'],
+                    offset: 't100px',
+                    closeBtn: 2
+                });
+                tableIns2 = table.render({
+                    elem: '#demo_role_permission_selected',
+                    //width: 200,
+                    height: 320, //容器高度
+                    url: getPermListByRoleId,
+                    method:'POST',
+                    where:{"roleId":curRoleId},
+                    //headers: {'Content-Type':'application/json;charset=UTF-8'},
+                    contentType:'application/json',
+                    page: false,
+                    id: 'demo1',
+                    cols: [
+                        [{
+                            checkbox: true,
+                            fixed: true
+                        }, {
+                            field: 'permNameByRoleId',
+                            title: '菜单权限名',
+                            width: 100
+                        }]
+                    ],
+                    done: function(res, curr, count) {
+                        console.log(res);
+                        //得到当前页码
+                        console.log(curr);
+                        //得到数据总量
+                        console.log(count);
+                        
                     },
-                    btn2: function(index, layero) {
-                        $('form[lay-filter="form-edit"]').find('button[type="reset"]').click();
-                        return false;
+                    loading: true,
+                    //method: 'post'
+                });
+                tableIns3 = table.render({
+                    elem: '#demo_role_permission',
+                    height: '320', //容器高度
+                    url: getPermListForRole,
+                    method:'POST',
+                    where:{"roleId":curRoleId},
+                    //headers: {'Content-Type':'application/json;charset=UTF-8'},
+                    contentType:'application/json',
+                    page: true,
+                    id: 'demo2',
+                    cols: [
+                        [{
+                            checkbox: true,
+                            fixed: true
+                            //templet: '#roleCheckbox2'
+                        }, {
+                            field: 'permissionName',
+                            title: '菜单权限名',
+                            width: 100
+                        }, {
+                            field: 'permissionDescription',
+                            title: '描述',
+                            width: 120
+                        }, {
+                            field: 'gmtCreate',
+                            title: '创建时间',
+                            width: 160
+                        }]
+                    ],
+                    done: function(res, curr, count) {
+                        //如果是异步请求数据方式，res即为你接口返回的信息。
+                        //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                        console.log(res);
+                        //得到当前页码
+                        console.log(curr);
+                        //得到数据总量
+                        console.log(count);
                     },
-                    success: function() {
-                        form.render(null, 'form-edit');
-                    }
+                    loading: true,
+                    //method: 'post'
                 });
             };
 
@@ -218,7 +307,8 @@
                 var data = obj.data; //获得当前行数据
                 var layEvent = obj.event; //获得 lay-event 对应的值
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
-
+                // 当前选中行的id
+                curRoleId = data.xId;
                 actionType = layEvent;
                 if (layEvent === 'detail') { //查看
                     console.log(table.checkStatus('demo'));
@@ -260,12 +350,35 @@
             // 编辑的类型
             var actionType;
             form.on('submit(roleFormEdit)', function(data) {
+                debugger;
+                // 编辑角色中的按钮事件类型
+                var itemActionType 
                 var subUrl = addUrl;
                 console.log(actionType);
                 // 判断是否为edit事件，默认为add
+                var ids = [];
+                var bindData;
                 if(actionType === "edit"){
-                    subUrl = updUrl;
+                    itemActionType=data.elem.dataset.action;
+                    console.log(itemActionType);
+                    if(itemActionType == "delPerm"){
+                        subUrl = delPermListByRoleId;
+                        var bindData = table.checkStatus('demo1');
+                        if (bindData.data.length === 0) {
+                            layer.msg('请选择要删除的数据');
+                            return;
+                        }
+                    } else {//addPerm
+                        subUrl = addPermListByRoleId;
+                        var bindData = table.checkStatus('demo2');
+                        if (bindData.data.length === 0) {
+                            layer.msg('请选择要添加的数据');
+                            return;
+                        }
+                    }
                 }
+                ids = getIds(bindData.data);
+                data.field.ids = ids;
                 // 对密码加密
                 //data.field.password = $.md5(data.field.password);
 
@@ -285,6 +398,8 @@
                         console.log(res.length);
                         //带条件查询
                         tableIns.reload();
+                        tableIns2.reload();
+                        tableIns3.reload();
                     }
                 });
                 // layer.msg('roleFormEdit');
@@ -355,6 +470,14 @@
                     }
                 });
             };
+            // 获取选中的权限的id
+            function getIds(data) {
+                var ids = [];
+                $.each(data, function(index, item) {
+                    ids.push(item.xId);
+                });
+                return ids;
+            }
         });
     </script>
 </body>

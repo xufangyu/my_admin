@@ -76,6 +76,7 @@
             <script type="text/html" id="uBarDemo">
                 <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
                 <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-xs" lay-event="bind">绑定</a>
                 <!-- 判断是否为admin账号，不允许删除 -->
                 {{#  if(d.xId != 1){ }}
                 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
@@ -127,6 +128,41 @@
             </form>
         </div>
     </script>
+
+    <script type="text/html" id="bind-tpl-role">
+        <div style="margin:10px">
+            <form class="layui-form" action="" lay-filter="form-edit">
+                <input type="hidden" name="xId" value="{{d.user.xId}}" />
+                <div class="layui-form-item" id="inp-userDescription">
+                    <div class="kit-table-body" style="float: left;">
+                        <table id="demo_user_role_selected" lay-filter="demo_user_role_selected"></table>
+                    </div>
+                    <div class="kit-table-body">
+                        <table id="demo_user_role" lay-filter="demo_user_role"></table>
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <div class="">
+                        {{# if(d.disabled=='disabled'){ }}
+                        <div style="text-align:left;float: left;margin-right:100px">
+                        <button class="layui-btn layui-btn-disabled" {{d.disabled}}>删除</button>
+                        </div>
+                        <div style="float: right;">
+                        <button class="layui-btn layui-btn-disabled" {{d.disabled}}>添加</button>
+                        </div>
+                        {{# } else { }}
+                        <div style="text-align:left;float: left;margin-right:100px">
+                        <button class="layui-btn" lay-submit data-action="delRole" lay-filter="userFormBind" {{d.disabled}}>删除</button>
+                        </div>
+                        <div style="">
+                        <button class="layui-btn" lay-submit data-action="addRole" lay-filter="userFormBind" {{d.disabled}}>添加</button>
+                        </div>
+                        {{# } }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
     <script type="text/html" id="myCheckbox">
         {{# if(d.loginName == 'admin') { }}
         {{#     layui.table.cache.demo[d.LAY_TABLE_INDEX].checkDisabled=true; }}
@@ -141,6 +177,11 @@
         var updUrl = "/xqsrd/user/upd";
         var delUrl = "/xqsrd/user/del";
         var delBatchUrl = "/xqsrd/user/delBatch";
+        var getRoleListForUser = "/xqsrd/role/getListAllForUser";
+        var getRoleListByUserId = "/xqsrd/role/getListByUserId";
+        var addRoleListByUserId = "/xqsrd/user/addRoleListByUserId";
+        var delRoleListByUserId = "/xqsrd/user/delRoleListByUserId";
+        var curUserId;
         var staticData = {
             };
         // 获取所有的父节点菜单
@@ -211,7 +252,7 @@
                     }, {
                         fixed: 'right',
                         title: '操作',
-                        width: 150,
+                        width: 200,
                         align: 'center',
                         toolbar: '#uBarDemo'
                     }
@@ -228,6 +269,7 @@
                 loading: true,
                 //method: 'post'
             });
+            var tableIns2,tableIns3;
 
             //监听搜索表单提交
             form.on('submit(subSearch)', function(data) {
@@ -260,6 +302,90 @@
                     }
                 });
             };
+            // 显示UI
+            function openUIFunc2(html) {
+                layer.open({
+                    type: 1,
+                    title: '表单',
+                    content: html,
+                    area: ['800px', '550px'],
+                    offset: 't100px',
+                    closeBtn: 2
+                });
+                tableIns2 = table.render({
+                    elem: '#demo_user_role_selected',
+                    //width: 200,
+                    height: 320, //容器高度
+                    url: getRoleListByUserId,
+                    method:'POST',
+                    where:{"userId":curUserId},
+                    //headers: {'Content-Type':'application/json;charset=UTF-8'},
+                    contentType:'application/json',
+                    page: false,
+                    id: 'demoUser1',
+                    cols: [
+                        [{
+                            checkbox: true,
+                            fixed: true
+                        }, {
+                            field: 'roleNameByRoleId',
+                            title: '角色名',
+                            width: 100
+                        }]
+                    ],
+                    done: function(res, curr, count) {
+                        console.log(res);
+                        //得到当前页码
+                        console.log(curr);
+                        //得到数据总量
+                        console.log(count);
+                        
+                    },
+                    loading: true,
+                    //method: 'post'
+                });
+                tableIns3 = table.render({
+                    elem: '#demo_user_role',
+                    height: '320', //容器高度
+                    url: getRoleListForUser,
+                    method:'POST',
+                    where:{"userId":curUserId},
+                    //headers: {'Content-Type':'application/json;charset=UTF-8'},
+                    contentType:'application/json',
+                    page: true,
+                    id: 'demoUser2',
+                    cols: [
+                        [{
+                            checkbox: true,
+                            fixed: true
+                            //templet: '#roleCheckbox2'
+                        }, {
+                            field: 'roleName',
+                            title: '角色名',
+                            width: 100
+                        }, {
+                            field: 'roleDescription',
+                            title: '描述',
+                            width: 120
+                        }, {
+                            field: 'gmtCreate',
+                            title: '创建时间',
+                            width: 160
+                        }]
+                    ],
+                    done: function(res, curr, count) {
+                        //如果是异步请求数据方式，res即为你接口返回的信息。
+                        //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                        console.log(res);
+                        //得到当前页码
+                        console.log(curr);
+                        //得到数据总量
+                        console.log(count);
+                    },
+                    loading: true,
+                    //method: 'post'
+                });
+            };
 
             //监听工具条
             table.on('tool(userdemo)', function(obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -267,6 +393,8 @@
                 var layEvent = obj.event; //获得 lay-event 对应的值
                 var tr = obj.tr; //获得当前行 tr 的DOM对象
 
+                // 当前选中行的id
+                curUserId = data.xId;
                 actionType = layEvent;
                 if (layEvent === 'detail') { //查看
                     console.log(table.checkStatus('demo'));
@@ -297,6 +425,12 @@
                     //     username: '123',
                     //     title: 'xxx'
                     // });
+                } else if(layEvent === 'bind') {
+                    var d = {
+                        user: data
+                    };
+                    //do something
+                    laytpl($('#bind-tpl-role').html()).render(d, openUIFunc2);
                 }
             });            
             form.render(null, 'kit-search-form');
@@ -340,6 +474,57 @@
                 //     title: '最终的提交信息'
                 // })
                 editIndex && layer.close(editIndex); //关闭弹出层
+                return false;
+            });
+            form.on('submit(userFormBind)', function(data) {
+                //debugger;
+                // 编辑角色中的按钮事件类型
+                var itemActionType 
+                var subUrl = addRoleListByUserId;
+                var ids = [];
+                var bindData;
+                // 添加或者删除角色
+                itemActionType=data.elem.dataset.action;
+                console.log(itemActionType);
+                if(itemActionType == "delRole"){
+                    subUrl = delRoleListByUserId;
+                    bindData = table.checkStatus('demoUser1');
+                    if (bindData.data.length === 0) {
+                        layer.msg('请选择要删除的数据');
+                        return;
+                    }
+                } else { // addRole
+                    subUrl = addRoleListByUserId;
+                    bindData = table.checkStatus('demoUser2');
+                    if (bindData.data.length === 0) {
+                        layer.msg('请选择要添加的数据');
+                        return;
+                    }
+                }
+                // 获得数据
+                ids = getIds(bindData.data);
+                data.field.ids = ids;
+
+                // 提交数据
+                $.ajax({
+                    url:subUrl,
+                    type: "POST",
+                    data:JSON.stringify(data.field),
+                    contentType: "application/json",
+                    dataType: "json",
+                    error: function(xhr, status, thrown) {
+                        layui.hint().error('Navbar error:AJAX请求出错.' + thrown);
+                    },
+                    success: function(res) {
+                        //得到数据
+                        console.log(res);
+                        console.log(res.length);
+                        //带条件查询
+                        tableIns2.reload();
+                        tableIns3.reload();
+                    }
+                });
+                //editIndex && layer.close(editIndex); //关闭弹出层
                 return false;
             });
             $('.kit-search-btns').children('a').off('click').on('click', function() {
@@ -406,6 +591,14 @@
                     }
                 });
             };
+            // 获取选中的权限的id
+            function getIds(data) {
+                var ids = [];
+                $.each(data, function(index, item) {
+                    ids.push(item.xId);
+                });
+                return ids;
+            }
         });
     </script>
 </body>
