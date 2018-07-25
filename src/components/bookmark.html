@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Login - KitAdminCore</title>
+    <script>
+        if (window != window.top) top.location.href = self.location.href;
+    </script>
+    <link href="/lib/layui/css/layui.css" rel="stylesheet" />
+    <link href="/lib/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" />
+    <link href="/css/bookmark.css" rel="stylesheet" />
+
+</head>
+
+
+<body class="kit-login-bg">
+    <div class="container demo-1">
+        <div class="content">
+            <div id="large-header" class="large-header">
+                <div class="kit-login-box">
+                    <header>
+                        <h1>网站账号记录</h1>
+                    </header>
+                    <div class="kit-login-main">
+                        <form class="layui-form" method="post">
+                            <div class="layui-form-item">
+                                <label class="kit-login-icon">
+                                    <i class="layui-icon">&#xe612;</i>
+                                </label>
+                                <input type="text" name="websiteName" lay-verify="" autocomplete="off" placeholder="网站名称." class="layui-input">
+                            </div>
+							<div class="layui-form-item">
+                                <label class="kit-login-icon">
+                                    <i class="layui-icon">&#xe612;</i>
+                                </label>
+                                <input type="text" name="websiteUrl" lay-verify="" autocomplete="off" placeholder="网站地址." class="layui-input">
+                            </div>
+							<div class="layui-form-item">
+                                <label class="kit-login-icon">
+                                    <i class="layui-icon">&#xe612;</i>
+                                </label>
+                                <input type="text" name="loginName" lay-verify="" autocomplete="off" placeholder="登录名." class="layui-input">
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="kit-login-icon">
+                                    <i class="layui-icon">&#xe642;</i>
+                                </label>
+                                <input type="password" name="loginPasswd" lay-verify="pass" autocomplete="off" placeholder="密码." class="layui-input">
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="kit-login-icon">
+                                    <i class="layui-icon">&#xe642;</i>
+                                </label>
+                                <input type="text" name="bindMail" lay-verify="" autocomplete="off" placeholder="邮箱." class="layui-input">
+
+                            </div>
+							<div class="layui-form-item">
+                                <label class="kit-login-icon">
+                                    <i class="layui-icon">&#xe642;</i>
+                                </label>
+                                <input type="text" name="bindPhone" lay-verify="" autocomplete="off" placeholder="电话号码." class="layui-input">
+
+                            </div>
+							<div class="layui-form-item layui-form-text">
+								<div class="layui-input-block ">
+									<textarea name="desc" placeholder="请输入描述" class="layui-textarea" ></textarea>
+								</div>
+							</div>
+                            <div class="layui-form-item">
+                                <div class="kit-pull-right">
+                                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="websiteMark">
+                                        <i class="fa fa-sign-in" aria-hidden="true"></i> 保存
+                                    </button>
+                                </div>
+                                <div class="kit-clear"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <footer>
+                        <p>XQSRD © <a href="http://blog.xxxx.cn" style="color:white; font-size:18px;" target="_blank">www.xxxx.cn</a></p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /container -->
+<!-- 
+    <script src="/lib/layui/layui.js"></script> -->
+	<script src="/lib/jquery/jquery-3.2.1.js"></script>
+	<script src="/lib/util/base64.js"></script>
+    <script>
+        var add = "xqsrd/bookmark/add";
+        layui.use(['layer', 'form'], function() {
+            var layer = layui.layer,
+                $ = layui.jquery,
+                form = layui.form;
+
+
+            // 等待加载的动画
+            //var index = layer.load(2, {
+            //    shade: [0.3, '#333']
+            //});
+            //layer.close(index);
+            
+
+			form.on('submit(websiteMark)', function(data) {
+				// 加密密码
+				data.field.loginPasswd = encryptPassword(data.field.loginPasswd);
+				
+				//layer.msg(JSON.stringify(data.field));
+				//var dataPost = JSON.stringify(data.field);
+				// 发送请求
+				// var dataPost = {
+				// 	"apiName":"websiteMark",
+				// 	"param":JSON.stringify(data.field),
+				// 	"version":"v1.0"
+				// };
+				// 转成json发送
+				//dataPost = JSON.stringify(dataPost)
+				//layer.msg(dataPost);
+				
+				$.ajax({
+					url:add,
+					type:"POST",
+                    data:JSON.stringify(data.field),
+                    contentType: "application/json",
+					dataType:"json",
+					success:function(data){
+                        debugger;
+						if(data.code != undefined && data.code == 0){
+							alert(data.msg);
+						}else{
+							alert("保存失败");
+						}
+						
+					},
+					error:function(e,err){
+						alert(e);
+					}
+				});
+				//阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				return false;
+			});
+
+
+			var encryptPassword = function(value){
+				if(value == undefined || value == ''){
+					return value;
+				}
+				var encPass = new Base64().encode(value);
+				return encPass;
+			}
+        });
+    </script>
+</body>
+
+</html>

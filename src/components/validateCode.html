@@ -5,9 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>ValidateCode</title>
-  <link rel="stylesheet" href="./plugins/bootstrap-4.0.0/css/bootstrap.css" media="all" />
-  <link rel="stylesheet" href="./plugins/font-awesome/css/font-awesome.css" media="all" />
-  <script src="./plugins/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap.css" media="all" />
+  <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.css" media="all" />
+  <script src="./lib/jquery/jquery-3.2.1.js"></script>
   <!-- 防止跨域 -->
   <meta name="_csrf" content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
@@ -16,11 +16,18 @@
   .validate-code {
     padding-top: 5px;
   }
+    .col-center-block {
+        float: none;
+        display: block;
+        margin-top: 10%;
+        margin-left: auto;
+        margin-right: auto;
+    }
   </style>
 </head>
 
 <body class="kit-theme">
-    <div class="form-group  col-lg-6">  
+    <div class="form-group col-lg-6 col-center-block">  
         <label for="id" class="col-sm-4 control-label">  
             验证码:  
         </label>  
@@ -33,7 +40,7 @@
  --><!-- 	            <i class="fa fa-sign-out" aria-hidden="true"></i> -->            
             </div>
             <div class="validate-code">
-                <img id="imgObj" alt="验证码" src="/validateCode" onclick="changeImg()" height="30px"/>  
+                <img id="imgObj" alt="验证码" src="xqsrd/security/validateCode" onclick="changeImg()" height="30px"/>  
                 <a href="#" onclick="changeImg()">换一张</a>  
             </div>
         </div>  
@@ -44,7 +51,7 @@
         function changeImg() {  
             var imgSrc = $("#imgObj");  
             //var src = imgSrc.attr("src");  
-            var src = '/validateCode';
+            var src = 'xqsrd/security/validateCode';
             imgSrc.attr("src", changeUrl(src));  
         }  
         //为了使每次生成图片不一致，即不让浏览器读缓存，所以需要加上时间戳  
@@ -76,7 +83,7 @@
                     };
                 var param1 = $(this).val();
                 $.ajax({
-                    url: '/checkCode',
+                    url: 'xqsrd/security/checkCode',
                     type: 'POST',
                     data: JSON.stringify(param),
                     //contentType: 'application/json',

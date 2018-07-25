@@ -94,7 +94,7 @@
     <script type="text/html" id="edit-tpl">
         <div style="margin:10px">
             <form class="layui-form" action="" lay-filter="form-edit">
-                <input type="hidden" name="xId" value="{{d.menu.xId}}" />
+                <input type="hidden" name="xId" value="{{d.menu.xId}}" id="menuXid" />
                 <div class="layui-form-item">
                     <label class="layui-form-label">菜单名称</label>
                     <div class="layui-input-block">
@@ -180,7 +180,7 @@
 
     <!-- <script src="./plugins/layui/layui.js"></script> -->
     <script>
-        var getListUrl = "/xqsrd/menu/getAllMenuList";
+        var getListUrl = "/xqsrd/menu/getList";
         var addUrl = "/xqsrd/menu/addMenu";
         var updUrl = "/xqsrd/menu/updMenu";
         var delUrl = "/xqsrd/user/del";
@@ -248,6 +248,8 @@
                 height: 'full-135', //容器高度
                 // url: 'datas/userMgt.json',
                 url: getListUrl,
+                method:'POST',
+                contentType:'application/json',
                 page: true,
                 id: 'demo',
                 cols: [
@@ -273,9 +275,9 @@
                         align: 'center',
                         templet: '#icon-Tpl'
                     }, {
-                        field: 'parentId',
+                        field: 'parentName',
                         title: '父节点',
-                        width: 80
+                        width: 120
                     }, {
                         field: 'leaf',
                         title: '菜单类型',
@@ -434,7 +436,7 @@
                                 menuPath: '1',
                                 menuComponent: '1',
                                 icon: 'file-text-o',
-                                parentId: 0,
+                                parentName: '1',
                                 leaf: '0',
                                 pos: '10'
                             },
